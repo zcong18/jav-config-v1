@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo no test!",
-    "build": "ncc build ./index.js -o run"
+    "build": "ncc build ./index.js -o run",
+    "update": "npm run build && gct -p update"
   },
   "author": "zcong1993 <1005997919@qq.com>",
   "license": "MIT",
