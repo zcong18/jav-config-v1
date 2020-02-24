@@ -1,0 +1,17 @@
+
+name: Action Job
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: run script
+        run: |
+          node ./run/index.js
