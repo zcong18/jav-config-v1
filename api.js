@@ -131,9 +131,9 @@ const getAll = async () => {
   ])
 
   return {
-    latest_version: '2.3.2',
-    latest_version_code: 14,
-    changelog: '更新配置地址\nbtso 地址使用网络地址',
+    latest_version: '2.4.0',
+    latest_version_code: 15,
+    changelog: '修复图片显示bug',
     btso_url: btso,
     data_sources: [
       {
