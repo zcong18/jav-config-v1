@@ -122,6 +122,17 @@ const callAvmemoApi = async () => {
   }
 }
 
+const getOldConfig = async () => {
+  const { data } = await makeGetRequest(`https://jav-config-v1.netlify.com/jav.json?t=${new Date().getTime()}`)
+
+  return data
+}
+
+const getHost = u => {
+  const uu = new URL(u)
+  return uu.hostname
+}
+
 const getAll = async () => {
   const [avmoo, avsox, avmemo, btso] = await Promise.all([
     callAvmooApi(),
@@ -130,52 +141,46 @@ const getAll = async () => {
     callBtsoApi(),
   ])
 
-  return {
+  const oldConfig = await getOldConfig()
+  console.log(JSON.stringify(oldConfig, null, 2))
+
+  const newConfig = {
     latest_version: '2.4.0',
     latest_version_code: 15,
     changelog: '修复图片显示bug',
     btso_url: btso,
-    data_sources: [
-      {
-        name: 'AVMOO 日本',
-        link: avmoo,
-        legacies: [
-          'javzoo.com',
-          'avmoo.xyz',
-          'avmoo.net',
-          'avmoo.pw',
-          'javmoo.com',
-          'javlog.com',
-          'javtag.com',
-          'javhip.com',
-          'avos.pw',
-          'avmo.pw',
-          'avmo.club',
-          'avio.pw',
-          'javdog.com',
-          'javmoo.net',
-        ],
-      },
-      {
-        name: 'AVMOO 日本无码',
-        link: avsox,
-        legacies: [
-          'avme.pw',
-          'avsox.net',
-          'javkey.com',
-          'javfee.com',
-          'javpee.com',
-          'avso.pw',
-          'avso.club',
-        ],
-      },
-      {
-        name: 'AVMOO 欧美',
-        link: avmemo,
-        legacies: [],
-      },
-    ],
+    data_sources: []
   }
+
+  oldConfig.data_sources.forEach(s => {
+    let url
+    if (s.name === 'AVMOO 日本') {
+      url = avmoo
+    } else if (s.name === 'AVMOO 日本无码') {
+      url = avsox
+    } else if (s.name === 'AVMOO 欧美') {
+      url = avmemo
+    }
+
+    const ds = {
+      name: s.name,
+      link: url,
+      legacies: [
+        ...s.legacies
+      ]
+    }
+    const newUrl = url
+    const oldHost = getHost(s.link)
+    if (s.link !== newUrl && !ds.legacies.includes(oldHost)) {
+      console.log(`add legacy url: ${oldHost}, new url: ${url}`)
+      ds.legacies.push(oldHost)
+    }
+    newConfig.data_sources.push(ds)
+  })
+
+  console.log(JSON.stringify(newConfig, null, 2))
+
+  return newConfig
 }
 
 module.exports = {
