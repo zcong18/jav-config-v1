@@ -5353,7 +5353,7 @@ const { getAll } = __webpack_require__(405)
 
 const run = async () => {
   const config = await getAll()
-  fs.writeFileSync('./config/jav.json', JSON.stringify(config))
+  fs.writeFileSync('./public/jav.json', JSON.stringify(config))
 }
 
 run()
