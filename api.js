@@ -145,9 +145,9 @@ const getAll = async () => {
   console.log(JSON.stringify(oldConfig, null, 2))
 
   const newConfig = {
-    latest_version: '2.4.0',
-    latest_version_code: 15,
-    changelog: '修复图片显示bug',
+    latest_version: '2.4.1',
+    latest_version_code: 16,
+    changelog: '修复配置地址',
     btso_url: btso,
     data_sources: []
   }
