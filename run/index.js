@@ -15288,7 +15288,7 @@ const getValidUrl = async (urls, validFunc, defaultUrl) => {
   for (const url of urls) {
     console.log('valid: ', url)
     try {
-      const response = await makeGetRequest(url, 5000)
+      const response = await makeGetRequest(url, 30000)
       const data = response.data
       if (validFunc(data)) {
         console.log('valid done! ', url)
