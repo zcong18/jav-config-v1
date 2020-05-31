@@ -15253,7 +15253,7 @@ const createInstance = (endpoint, timeout = 5000) => axios.create({
   }
 })
 
-const makeGetRequest = (url, timeout = 5000) => {
+const makeGetRequest = (url, timeout = 30000) => {
   const source = axios.CancelToken.source()
   setTimeout(() => source.cancel(), timeout)
   return axios.get(url, {
@@ -15290,12 +15290,12 @@ const getValidUrl = async (urls, validFunc, defaultUrl) => {
     try {
       const response = await makeGetRequest(url, 5000)
       const data = response.data
-      console.log('valid done! ', url)
       if (validFunc(data)) {
+        console.log('valid done! ', url)
         return url
       }
     } catch(err) {
-      console.log('valid err', err)
+      console.log('valid err', url, err)
     }
   }
   return defaultUrl
