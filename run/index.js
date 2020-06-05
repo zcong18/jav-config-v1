@@ -15285,7 +15285,7 @@ const getValidUrl = async (urls, validFunc, defaultUrl) => {
   if (urls.length === 0) {
     return defaultUrl
   }
-  for (const url of urls) {
+  return Promise.race(urls.map(async url => {
     console.log('valid: ', url)
     try {
       const response = await makeGetRequest(url, 30000)
@@ -15296,9 +15296,12 @@ const getValidUrl = async (urls, validFunc, defaultUrl) => {
       }
     } catch(err) {
       console.log('valid err', url, err)
+      throw err
     }
-  }
-  return defaultUrl
+  }))
+    .catch(err => {
+      return defaultUrl
+    })
 }
 
 const callBtsoApi = async () => {
