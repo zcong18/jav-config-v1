@@ -5226,7 +5226,7 @@ module.exports = basePickBy;
 /* 90 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-var SetCache = __webpack_require__(880),
+var SetCache = __webpack_require__(405),
     arraySome = __webpack_require__(743),
     cacheHas = __webpack_require__(983);
 
@@ -5349,7 +5349,7 @@ exports.flatten = function(options) {
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
 const fs = __webpack_require__(747)
-const { getAll } = __webpack_require__(405)
+const { getAll } = __webpack_require__(883)
 
 const run = async () => {
   const config = await getAll()
@@ -5357,6 +5357,11 @@ const run = async () => {
 }
 
 run()
+
+if (!fs.existsSync('./public/jav.json')) {
+  console.log('./public/jav.json not exists')
+  process.exit(1)
+}
 
 
 /***/ }),
@@ -15233,197 +15238,33 @@ Object.keys(domLvl1).forEach(function(key) {
 /* 405 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-const axios = __webpack_require__(53).default
-const cheerio = __webpack_require__(736)
+var MapCache = __webpack_require__(978),
+    setCacheAdd = __webpack_require__(20),
+    setCacheHas = __webpack_require__(945);
 
-const DEFAULT_URLS = {
-  btso: 'https://btsow.club/',
-  avmo: 'https://avmask.com/',
-  avsox: 'https://avsox.host/',
-  avmemo: 'https://avmemo.asia/',
-}
+/**
+ *
+ * Creates an array cache object to store unique values.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [values] The values to cache.
+ */
+function SetCache(values) {
+  var index = -1,
+      length = values == null ? 0 : values.length;
 
-const createInstance = (endpoint, timeout = 5000) => axios.create({
-  baseURL: endpoint,
-  timeout,
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36',
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-    'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6'
-  }
-})
-
-const makeGetRequest = (url, timeout = 30000) => {
-  const source = axios.CancelToken.source()
-  setTimeout(() => source.cancel(), timeout)
-  return axios.get(url, {
-    cancelToken: source.token,
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36',
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
-      'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6'
-    }
-  })
-}
-
-const getUrls = async (url, elClass) => {
-  console.log(url)
-  const response = await makeGetRequest(url)
-  const data = response.data
-  const $ = cheerio.load(data)
-  const urls = $(elClass)
-    .map((_, el) => {
-      const e = $(el).find('a')
-      return e.attr().href
-    })
-    .get()
-
-  return urls
-}
-
-const getValidUrl = async (urls, validFunc, defaultUrl) => {
-  if (urls.length === 0) {
-    return defaultUrl
-  }
-  return Promise.race(urls.map(async url => {
-    console.log('valid: ', url)
-    try {
-      const response = await makeGetRequest(url, 30000)
-      const data = response.data
-      if (validFunc(data)) {
-        console.log('valid done! ', url)
-        return url
-      }
-    } catch(err) {
-      console.log('valid err', url, err)
-      throw err
-    }
-  }))
-    .catch(err => {
-      return defaultUrl
-    })
-}
-
-const callBtsoApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/btsow', 'h2')
-    return getValidUrl(
-      urls,
-      data => /Select \.torrent file/.test(data),
-      DEFAULT_URLS['btso'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['btso']
+  this.__data__ = new MapCache;
+  while (++index < length) {
+    this.add(values[index]);
   }
 }
 
-const callAvmooApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/avmo', 'h4')
-    return getValidUrl(
-      urls,
-      data => /简体中文/.test(data),
-      DEFAULT_URLS['avmo'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['avmo']
-  }
-}
+// Add methods to `SetCache`.
+SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+SetCache.prototype.has = setCacheHas;
 
-const callAvsoxApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/avsox', 'h4')
-    return getValidUrl(
-      urls,
-      data => /简体中文/.test(data),
-      DEFAULT_URLS['avsox'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['avsox']
-  }
-}
-
-const callAvmemoApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/avmemo', 'h4')
-    return getValidUrl(
-      urls,
-      data => /简体中文/.test(data),
-      DEFAULT_URLS['avmemo'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['avmemo']
-  }
-}
-
-const getOldConfig = async () => {
-  const { data } = await makeGetRequest(`https://jav-config-v1.netlify.com/jav.json?t=${new Date().getTime()}`)
-
-  return data
-}
-
-const getHost = u => {
-  const uu = new URL(u)
-  return uu.hostname
-}
-
-const getAll = async () => {
-  const [avmoo, avsox, avmemo, btso] = await Promise.all([
-    callAvmooApi(),
-    callAvsoxApi(),
-    callAvmemoApi(),
-    callBtsoApi(),
-  ])
-
-  const oldConfig = await getOldConfig()
-  console.log(JSON.stringify(oldConfig, null, 2))
-
-  const newConfig = {
-    latest_version: '2.4.1',
-    latest_version_code: 16,
-    changelog: '修复配置地址',
-    btso_url: btso,
-    data_sources: []
-  }
-
-  oldConfig.data_sources.forEach(s => {
-    let url
-    if (s.name === 'AVMOO 日本') {
-      url = avmoo
-    } else if (s.name === 'AVMOO 日本无码') {
-      url = avsox
-    } else if (s.name === 'AVMOO 欧美') {
-      url = avmemo
-    }
-
-    const ds = {
-      name: s.name,
-      link: url,
-      legacies: [
-        ...s.legacies
-      ]
-    }
-    const newUrl = url
-    const oldHost = getHost(s.link)
-    if (s.link !== newUrl && !ds.legacies.includes(oldHost)) {
-      console.log(`add legacy url: ${oldHost}, new url: ${url}`)
-      ds.legacies.push(oldHost)
-    }
-    newConfig.data_sources.push(ds)
-  })
-
-  console.log(JSON.stringify(newConfig, null, 2))
-
-  return newConfig
-}
-
-module.exports = {
-  getAll
-}
+module.exports = SetCache;
 
 
 /***/ }),
@@ -16325,7 +16166,7 @@ module.exports = toSource;
 /* 496 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-var arrayPush = __webpack_require__(883),
+var arrayPush = __webpack_require__(981),
     isFlattenable = __webpack_require__(408);
 
 /**
@@ -26215,7 +26056,7 @@ module.exports = {
 /* 857 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-var arrayPush = __webpack_require__(883),
+var arrayPush = __webpack_require__(981),
     isArray = __webpack_require__(143);
 
 /**
@@ -26539,39 +26380,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 880 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-var MapCache = __webpack_require__(978),
-    setCacheAdd = __webpack_require__(20),
-    setCacheHas = __webpack_require__(945);
-
-/**
- *
- * Creates an array cache object to store unique values.
- *
- * @private
- * @constructor
- * @param {Array} [values] The values to cache.
- */
-function SetCache(values) {
-  var index = -1,
-      length = values == null ? 0 : values.length;
-
-  this.__data__ = new MapCache;
-  while (++index < length) {
-    this.add(values[index]);
-  }
-}
-
-// Add methods to `SetCache`.
-SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
-SetCache.prototype.has = setCacheHas;
-
-module.exports = SetCache;
-
-
-/***/ }),
+/* 880 */,
 /* 881 */,
 /* 882 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -26619,28 +26428,163 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 
 /***/ }),
 /* 883 */
-/***/ (function(module) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
 
-/**
- * Appends the elements of `values` to `array`.
- *
- * @private
- * @param {Array} array The array to modify.
- * @param {Array} values The values to append.
- * @returns {Array} Returns `array`.
- */
-function arrayPush(array, values) {
-  var index = -1,
-      length = values.length,
-      offset = array.length;
+const axios = __webpack_require__(53).default
+const cheerio = __webpack_require__(736)
 
-  while (++index < length) {
-    array[offset + index] = values[index];
-  }
-  return array;
+const makeGetRequest = (url, timeout = 30000) => {
+  const source = axios.CancelToken.source()
+  setTimeout(() => source.cancel(), timeout)
+  return axios.get(url, {
+    cancelToken: source.token,
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+      'Accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6'
+    }
+  })
 }
 
-module.exports = arrayPush;
+const getUrls = async (url, elClass) => {
+  console.log(url)
+  const response = await makeGetRequest(url)
+  const data = response.data
+  const $ = cheerio.load(data)
+  const urls = $(elClass)
+    .map((_, el) => {
+      const e = $(el).find('a')
+      return e.attr().href
+    })
+    .get()
+
+  return urls
+}
+
+const getValidUrl = async (urls, validFunc) => {
+  if (urls.length === 0) {
+    throw new Error('no urls')
+  }
+  return Promise.race(urls.map(async url => {
+    console.log('valid: ', url)
+    try {
+      const response = await makeGetRequest(url, 30000)
+      const data = response.data
+      if (validFunc(data)) {
+        console.log('valid done! ', url)
+        return url
+      }
+    } catch(err) {
+      console.log('valid err', url, err)
+      throw err
+    }
+  }))
+}
+
+const callBtsoApi = async () => {
+  const urls = await getUrls('https://tellme.pw/btsow', 'h2')
+  return getValidUrl(
+    urls,
+    data => /Select \.torrent file/.test(data)
+  )
+}
+
+const callAvmooApi = async () => {
+  const urls = await getUrls('https://tellme.pw/avmo', 'h4')
+  return getValidUrl(
+    urls,
+    data => /简体中文/.test(data)
+  )
+}
+
+const callAvsoxApi = async () => {
+  const urls = await getUrls('https://tellme.pw/avmo', 'h4')
+  return getValidUrl(
+    urls,
+    data => /简体中文/.test(data)
+  )
+}
+
+const callAvmemoApi = async () => {
+  const urls = await getUrls('https://tellme.pw/avmemo', 'h4')
+  return getValidUrl(
+    urls,
+    data => /简体中文/.test(data)
+  )
+}
+
+const getOldConfig = async () => {
+  const { data } = await makeGetRequest(`https://jav-config-v1.netlify.com/jav.json?t=${new Date().getTime()}`)
+
+  return data
+}
+
+const getHost = u => {
+  if (!u) {
+    return null
+  }
+  const uu = new URL(u)
+  return uu.hostname
+}
+
+const getAll = async () => {
+  const [avmoo, avsox, avmemo, btso] = await Promise.all([
+    callAvmooApi(),
+    callAvsoxApi(),
+    callAvmemoApi(),
+    callBtsoApi(),
+  ])
+
+  console.log(111, avmoo, avsox, avmemo, btso)
+
+  const oldConfig = await getOldConfig()
+  console.log(JSON.stringify('oldConfig', oldConfig, null, 2))
+
+  const newConfig = {
+    latest_version: '2.4.1',
+    latest_version_code: 16,
+    changelog: '修复配置地址',
+    btso_url: btso,
+    data_sources: []
+  }
+
+  oldConfig.data_sources.forEach(s => {
+    let url
+    if (s.name === 'AVMOO 日本') {
+      url = avmoo
+    } else if (s.name === 'AVMOO 日本无码') {
+      url = avsox
+    } else if (s.name === 'AVMOO 欧美') {
+      url = avmemo
+    }
+
+    const ds = {
+      name: s.name,
+      link: url,
+      legacies: [
+        ...s.legacies
+      ]
+    }
+    const newUrl = url
+    const oldHost = getHost(s.link)
+    if (oldHost && s.link !== newUrl && !ds.legacies.includes(oldHost)) {
+      console.log(`add legacy url: ${oldHost}, new url: ${url}`)
+      ds.legacies.push(oldHost)
+    }
+    newConfig.data_sources.push(ds)
+  })
+
+  console.log(JSON.stringify(newConfig, null, 2))
+
+  return newConfig
+}
+
+// callAvsoxApi()
+//   .then(console.log)
+
+module.exports = {
+  getAll
+}
 
 
 /***/ }),
@@ -28604,7 +28548,32 @@ exports.getName = function(elem){
 
 /***/ }),
 /* 980 */,
-/* 981 */,
+/* 981 */
+/***/ (function(module) {
+
+/**
+ * Appends the elements of `values` to `array`.
+ *
+ * @private
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to append.
+ * @returns {Array} Returns `array`.
+ */
+function arrayPush(array, values) {
+  var index = -1,
+      length = values.length,
+      offset = array.length;
+
+  while (++index < length) {
+    array[offset + index] = values[index];
+  }
+  return array;
+}
+
+module.exports = arrayPush;
+
+
+/***/ }),
 /* 982 */,
 /* 983 */
 /***/ (function(module) {

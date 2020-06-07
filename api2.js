@@ -1,13 +1,6 @@
 const axios = require('axios').default
 const cheerio = require('cheerio')
 
-const DEFAULT_URLS = {
-  btso: 'https://btsow.club/',
-  avmo: 'https://avmask.com/',
-  avsox: 'https://avsox.host/',
-  avmemo: 'https://avmemo.asia/',
-}
-
 const makeGetRequest = (url, timeout = 30000) => {
   const source = axios.CancelToken.source()
   setTimeout(() => source.cancel(), timeout)
@@ -36,9 +29,9 @@ const getUrls = async (url, elClass) => {
   return urls
 }
 
-const getValidUrl = async (urls, validFunc, defaultUrl) => {
+const getValidUrl = async (urls, validFunc) => {
   if (urls.length === 0) {
-    return defaultUrl
+    throw new Error('no urls')
   }
   return Promise.race(urls.map(async url => {
     console.log('valid: ', url)
@@ -54,65 +47,38 @@ const getValidUrl = async (urls, validFunc, defaultUrl) => {
       throw err
     }
   }))
-    .catch(err => {
-      return defaultUrl
-    })
 }
 
 const callBtsoApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/btsow', 'h2')
-    return getValidUrl(
-      urls,
-      data => /Select \.torrent file/.test(data),
-      DEFAULT_URLS['btso'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['btso']
-  }
+  const urls = await getUrls('https://tellme.pw/btsow', 'h2')
+  return getValidUrl(
+    urls,
+    data => /Select \.torrent file/.test(data)
+  )
 }
 
 const callAvmooApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/avmo', 'h4')
-    return getValidUrl(
-      urls,
-      data => /简体中文/.test(data),
-      DEFAULT_URLS['avmo'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['avmo']
-  }
+  const urls = await getUrls('https://tellme.pw/avmo', 'h4')
+  return getValidUrl(
+    urls,
+    data => /简体中文/.test(data)
+  )
 }
 
 const callAvsoxApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/avsox', 'h4')
-    return getValidUrl(
-      urls,
-      data => /简体中文/.test(data),
-      DEFAULT_URLS['avsox'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['avsox']
-  }
+  const urls = await getUrls('https://tellme.pw/avmo', 'h4')
+  return getValidUrl(
+    urls,
+    data => /简体中文/.test(data)
+  )
 }
 
 const callAvmemoApi = async () => {
-  try {
-    const urls = await getUrls('https://tellme.pw/avmemo', 'h4')
-    return getValidUrl(
-      urls,
-      data => /简体中文/.test(data),
-      DEFAULT_URLS['avmemo'],
-    )
-  } catch (err) {
-    console.log(err)
-    return DEFAULT_URLS['avmemo']
-  }
+  const urls = await getUrls('https://tellme.pw/avmemo', 'h4')
+  return getValidUrl(
+    urls,
+    data => /简体中文/.test(data)
+  )
 }
 
 const getOldConfig = async () => {
@@ -140,7 +106,7 @@ const getAll = async () => {
   console.log(111, avmoo, avsox, avmemo, btso)
 
   const oldConfig = await getOldConfig()
-  console.log(JSON.stringify(oldConfig, null, 2))
+  console.log(JSON.stringify('oldConfig', oldConfig, null, 2))
 
   const newConfig = {
     latest_version: '2.4.1',
@@ -169,7 +135,7 @@ const getAll = async () => {
     }
     const newUrl = url
     const oldHost = getHost(s.link)
-    if (s.link !== newUrl && !ds.legacies.includes(oldHost)) {
+    if (oldHost && s.link !== newUrl && !ds.legacies.includes(oldHost)) {
       console.log(`add legacy url: ${oldHost}, new url: ${url}`)
       ds.legacies.push(oldHost)
     }

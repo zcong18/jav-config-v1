@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { getAll } = require('./api')
+const { getAll } = require('./api2')
 
 const run = async () => {
   const config = await getAll()
@@ -7,3 +7,8 @@ const run = async () => {
 }
 
 run()
+
+if (!fs.existsSync('./public/jav.json')) {
+  console.log('./public/jav.json not exists')
+  process.exit(1)
+}
