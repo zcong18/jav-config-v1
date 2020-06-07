@@ -5362,6 +5362,10 @@ const run = async () => {
 }
 
 run()
+  .catch(err => {
+    console.log(err.message)
+    process.exit(1)
+  })
 
 
 /***/ }),
