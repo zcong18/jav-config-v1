@@ -15,14 +15,14 @@ jobs:
       - name: run script
         run: |
           node ./run/index.js
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v1.0
-        with:
-          publish-dir: './public'
-          production-branch: master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
-          NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
+#       - name: Deploy to Netlify
+#         uses: nwtgck/actions-netlify@v1.0
+#         with:
+#           publish-dir: './public'
+#           production-branch: master
+#         env:
+#           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+#           NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
       - uses: amondnet/now-deployment@v2
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }} # Required
