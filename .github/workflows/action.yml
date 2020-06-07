@@ -24,9 +24,17 @@ jobs:
 #           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
 #           NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
       - uses: amondnet/now-deployment@v2
+        name: Deploy to Now
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }} # Required
           # github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
           now-args: '--prod' #Optional
           now-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
           now-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=public
+        env:
+          NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
