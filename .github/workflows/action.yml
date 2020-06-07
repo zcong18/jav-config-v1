@@ -1,5 +1,5 @@
 
-name: Action Job
+name: Deploy
 
 on:
   schedule:
@@ -15,14 +15,6 @@ jobs:
       - name: run script
         run: |
           node ./run/index.js
-#       - name: Deploy to Netlify
-#         uses: nwtgck/actions-netlify@v1.0
-#         with:
-#           publish-dir: './public'
-#           production-branch: master
-#         env:
-#           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
-#           NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
       - uses: amondnet/now-deployment@v2
         name: Deploy to Now
         with:
@@ -32,9 +24,17 @@ jobs:
           now-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
           now-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
       - name: Deploy to Netlify
-        uses: netlify/actions/cli@master
+        uses: nwtgck/actions-netlify@v1.0
         with:
-          args: deploy --dir=public
+          publish-dir: './public'
+          production-branch: master
         env:
-          NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
+      # - name: Deploy to Netlify
+      #   uses: netlify/actions/cli@master
+      #   with:
+      #     args: deploy --dir=public
+      #   env:
+      #     NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
