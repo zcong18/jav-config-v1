@@ -12,8 +12,3 @@ const run = async () => {
 }
 
 run()
-
-process.on('uncaughtException', err => {
-  console.log(err)
-  process.exit(1)
-})
