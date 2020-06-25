@@ -26502,7 +26502,7 @@ const callAvmooApi = async () => {
 }
 
 const callAvsoxApi = async () => {
-  const urls = await getUrls('https://tellme.pw/avmo', 'h4')
+  const urls = await getUrls('https://tellme.pw/avsox', 'h4')
   return getValidUrl(
     urls,
     data => /简体中文/.test(data)
