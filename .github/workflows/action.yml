@@ -12,9 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      # - name: run script
-      #   run: |
-      #     node ./run/index.js
+      - name: run script
+        run: |
+          node ./run/index.js
       - uses: amondnet/now-deployment@v2
         name: Deploy to Now
         with:
