@@ -15,14 +15,14 @@ jobs:
       - name: run script
         run: |
           node ./run/index.js
-      - uses: amondnet/now-deployment@v2
-        name: Deploy to Now
+      - name: Vercel Action
+        uses: amondnet/vercel-action@v19
         with:
-          zeit-token: ${{ secrets.ZEIT_TOKEN }} # Required
+          vercel-token: ${{ secrets.ZEIT_TOKEN }} # Required
           # github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          now-args: '--prod' #Optional
-          now-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
-          now-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
+          vercel-args: '--prod' #Optional
+          vercel-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
+          vercel-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.0
         with:
