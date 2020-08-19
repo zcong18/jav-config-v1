@@ -1,5 +1,7 @@
 const axios = require('axios').default
 const cheerio = require('cheerio')
+const allSettled = require('promise.allsettled');
+allSettled.shim()
 
 const makeGetRequest = (url, timeout = 30000) => {
   const source = axios.CancelToken.source()
@@ -33,7 +35,7 @@ const getValidUrl = async (urls, validFunc) => {
   if (urls.length === 0) {
     throw new Error('no urls')
   }
-  return Promise.race(urls.map(async url => {
+  const res = await Promise.allSettled(urls.map(async url => {
     console.log('valid: ', url)
     try {
       const response = await makeGetRequest(url, 30000)
@@ -47,6 +49,7 @@ const getValidUrl = async (urls, validFunc) => {
       throw err
     }
   }))
+  return res.filter(r => r.status === 'fulfilled')[0].value
 }
 
 const callBtsoApi = async () => {
