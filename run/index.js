@@ -29671,7 +29671,7 @@ const getHost = u => {
 }
 
 const getAll = async () => {
-  const [avmoo, avsox, avmemo, btso] = await Promise.all([
+  const [avmoo, avsox = 'https://avsox.icu', avmemo, btso] = await Promise.all([
     callAvmooApi(),
     callAvsoxApi(),
     callAvmemoApi(),
