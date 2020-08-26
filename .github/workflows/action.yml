@@ -23,6 +23,7 @@ jobs:
           vercel-args: '--prod' #Optional
           vercel-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
           vercel-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
+          vercel-project-name: jav-config-v1
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.0
         with:
