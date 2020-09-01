@@ -29575,7 +29575,7 @@ const cheerio = __webpack_require__(736)
 const allSettled = __webpack_require__(862);
 allSettled.shim()
 
-const makeGetRequest = (url, timeout = 30000) => {
+const makeGetRequest = (url, timeout = 15000) => {
   const source = axios.CancelToken.source()
   setTimeout(() => source.cancel(), timeout)
   return axios.get(url, {
