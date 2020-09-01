@@ -1,12 +1,16 @@
-name: Deploy
+
+name: Trigger Deploy
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
-  push:
+  issue_comment:
+    types: [created]
 
 jobs:
   build:
+    if: |
+      github.event_name == 'issue_comment' &&
+      (github.event.comment.author_association == 'member' || github.event.comment.author_association == 'owner') &&
+      startsWith(github.event.comment.body, '@trigger')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -30,10 +34,3 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
           NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
-      # - name: Deploy to Netlify
-      #   uses: netlify/actions/cli@master
-      #   with:
-      #     args: deploy --dir=public
-      #   env:
-      #     NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
-      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
