@@ -13,6 +13,6 @@ const run = async () => {
 
 run()
   .catch(err => {
-    console.log(err.message)
+    console.log(err)
     process.exit(1)
   })

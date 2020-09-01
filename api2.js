@@ -17,7 +17,7 @@ const makeGetRequest = (url, timeout = 30000) => {
 }
 
 const getUrls = async (url, elClass) => {
-  console.log(url)
+  console.log(222, url)
   const response = await makeGetRequest(url)
   const data = response.data
   const $ = cheerio.load(data)
@@ -85,7 +85,7 @@ const callAvmemoApi = async () => {
 }
 
 const getOldConfig = async () => {
-  const { data } = await makeGetRequest(`https://jav-config-v1.netlify.com/jav.json?t=${new Date().getTime()}`)
+  const { data } = await makeGetRequest(`https://jav-config-v1.zcong.now.sh/jav.json?t=${new Date().getTime()}`)
 
   return data
 }
