@@ -7,30 +7,33 @@ on:
 
 jobs:
   build:
-    if: |
-      github.event_name == 'issue_comment' &&
-      (github.event.comment.author_association == 'member' || github.event.comment.author_association == 'owner') &&
-      startsWith(github.event.comment.body, '@trigger')
+    # if: |
+    #   github.event_name == 'issue_comment' &&
+    #   (github.event.comment.author_association == 'member' || github.event.comment.author_association == 'owner') &&
+    #   startsWith(github.event.comment.body, '@trigger')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: run script
-        run: |
-          node ./run/index.js
-      - name: Vercel Action
-        uses: amondnet/vercel-action@v19
-        with:
-          vercel-token: ${{ secrets.ZEIT_TOKEN }} # Required
-          # github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
-          vercel-args: '--prod' #Optional
-          vercel-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
-          vercel-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
-          vercel-project-name: jav-config-v1
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v1.0
-        with:
-          publish-dir: './public'
-          production-branch: master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
-          NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
+      - run: |
+          cat "$GITHUB_EVENT_PATH"
+
+      # - uses: actions/checkout@v1
+      # - name: run script
+      #   run: |
+      #     node ./run/index.js
+      # - name: Vercel Action
+      #   uses: amondnet/vercel-action@v19
+      #   with:
+      #     vercel-token: ${{ secrets.ZEIT_TOKEN }} # Required
+      #     # github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
+      #     vercel-args: '--prod' #Optional
+      #     vercel-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
+      #     vercel-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
+      #     vercel-project-name: jav-config-v1
+      # - name: Deploy to Netlify
+      #   uses: nwtgck/actions-netlify@v1.0
+      #   with:
+      #     publish-dir: './public'
+      #     production-branch: master
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+      #     NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
