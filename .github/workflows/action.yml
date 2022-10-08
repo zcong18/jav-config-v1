@@ -19,7 +19,7 @@ jobs:
         with:
           message: "[skip ci] update config"
       - name: Vercel Action
-        uses: amondnet/vercel-action@v19
+        uses: amondnet/vercel-action@latest
         with:
           vercel-token: ${{ secrets.ZEIT_TOKEN }} # Required
           # github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
@@ -27,14 +27,14 @@ jobs:
           vercel-org-id: KG366qFCGECvpgGkAngp8Gri  #Required
           vercel-project-id: QmW9bccRB5AWnWwYZUaccWYkpvsVejouYTMo29umfGh36G #Required
           vercel-project-name: jav-config-v1
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v1.0
-        with:
-          publish-dir: './public'
-          production-branch: master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
-          NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
+#       - name: Deploy to Netlify
+#         uses: nwtgck/actions-netlify@v1.0
+#         with:
+#           publish-dir: './public'
+#           production-branch: master
+#         env:
+#           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+#           NETLIFY_SITE_ID: d3c379e7-7533-46cf-be3d-c50f46b92c35
       # - name: Deploy to Netlify
       #   uses: netlify/actions/cli@master
       #   with:
