@@ -19,7 +19,7 @@ jobs:
         with:
           message: "[skip ci] update config"
       - name: Vercel Action
-        uses: amondnet/vercel-action@latest
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.ZEIT_TOKEN }} # Required
           # github-token: ${{ secrets.GITHUB_TOKEN }} #Optional
